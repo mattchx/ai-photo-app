@@ -1,11 +1,13 @@
 package layout
 
+import "ai-photo-app/view/ui"
+
 
 templ App(nav bool) {
 	<!DOCTYPE html>
-	<html lang="en" data-theme="dark">
+	<html lang="en" data-theme="forest">
 		<head>
-			<title>Ai Photo APPA</title>
+			<title>Ai Photo App</title>
 			// <link rel="icon" type="image/x-icon" href="/public/favicon.ico"/>
 			<meta charset="UTF-8"/>
 			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -16,7 +18,7 @@ templ App(nav bool) {
 		</head>
 		<body class="antialiased">
 			if nav {
-				navigation
+				@ui.Navigation()
 			}
 			{ children... }
 		</body>
