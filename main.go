@@ -21,9 +21,12 @@ func main() {
 		log.Fatal(err)
 	}
 	router := chi.NewMux()
+	router.Use(handler.WithUser)
 
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
+
 	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
+	router.Get("/login", handler.MakeHandler(handler.HandleLogInIndex))
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 	slog.Info("App is running on ", "port", port)
