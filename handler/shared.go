@@ -4,7 +4,13 @@ import (
 	"ai-photo-app/types"
 	"log/slog"
 	"net/http"
+
+	"github.com/a-h/templ"
 )
+
+func render(r *http.Request, w http.ResponseWriter, component templ.Component) error {
+	return component.Render(r.Context(), w)
+}
 
 func getAuthenticatedUser(r *http.Request) types.AuthenticatedUser {
 	user, ok := r.Context().Value(types.UserContextKey).(types.AuthenticatedUser)

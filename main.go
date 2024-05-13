@@ -2,11 +2,12 @@ package main
 
 import (
 	"ai-photo-app/handler"
+	"ai-photo-app/pkg/sb"
+	"embed"
 	"log"
 	"log/slog"
 	"net/http"
 	"os"
-	"embed"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/joho/godotenv"
@@ -26,7 +27,8 @@ func main() {
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
 
 	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
-	router.Get("/login", handler.MakeHandler(handler.HandleLogInIndex))
+	router.Get("/login", handler.MakeHandler(handler.HandleLoginIndex))
+	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 	slog.Info("App is running on ", "port", port)
@@ -37,5 +39,5 @@ func initEverthing() error {
 	if err := godotenv.Load(); err != nil {
 		return err
 	}
-	return godotenv.Load()
+	return sb.Init()
 }

@@ -1,34 +1,56 @@
 package auth
 
 import "ai-photo-app/view/layout"
+import "github.com/nedpals/supabase-go"
 
-templ LogIn() {
+templ Login() {
 	@layout.App(false) {
 		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
 			<div class="max-w-screen-sm w-full bg-base-300 py-16 px-32 rounded-xl">
-				<div class="space-y-2">
-					<h1 class="text-center text-xl font-black">Log into AI PHOTO APP</h1>
-					<label class="form-control w-full">
-						<div class="label">
-							<span class="label-text">Email</span>
-						</div>
-						<input type="text" placeholder="Email" class="input input-bordered w-full"/>
-						<div class="label">
-							<span class="label-text-alt text-error">This is an error</span>
-						</div>
-					</label>
-					<label class="form-control w-full">
-						<div class="label">
-							<span class="label-text">Password</span>
-						</div>
-						<input type="password" placeholder="Password" class="input input-bordered w-full"/>
-						<div class="label">
-							<span class="label-text-alt text-error">This is an error</span>
-						</div>
-					</label>
-					<button class="btn btn-primary w-full">Log In <i class="fa-solid fa-arrow-right"></i></button>
-				</div>
+				<h1 class="text-center text-xl font-black">Log into AI PHOTO APP</h1>
+				@LoginForm(supabase.UserCredentials{}, LoginErrors{})
 			</div>
 		</div>
 	}
+}
+
+type LoginErrors struct {
+	Email              string
+	Password           string
+	InvalidCredentials string
+}
+
+templ LoginForm(creds supabase.UserCredentials, errors LoginErrors) {
+	<form
+		hx-post="/login"
+		hx-swap="outerHTML"
+		class="space-y-2"
+	>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Email</span>
+			</div>
+			<input type="email" value={ creds.Email } name="email" placeholder="Email" class="input input-bordered w-full"/>
+			if len(errors.Email) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{errors.Email}</span>
+				</div>
+			}
+		</label>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Password</span>
+			</div>
+			<input type="password" name="password" placeholder="Password" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{errors.Password}</span>
+				</div>
+			}
+		</label>
+		if len(errors.InvalidCredentials) > 0 {
+			<div class="text-sm text-error">{ errors.InvalidCredentials }</div>
+		}
+		<button class="btn btn-primary w-full">Log In <i class="fa-solid fa-arrow-right"></i></button>
+	</form>
 }
