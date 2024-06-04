@@ -3,6 +3,84 @@ package auth
 import "ai-photo-app/view/layout"
 import "github.com/nedpals/supabase-go"
 
+type SignupParams struct {
+	Email           string
+	Password        string
+	ConfirmPassword string
+}
+
+type SignupErrors struct {
+	Email           string
+	Password        string
+	ConfirmPassword string
+}
+
+templ SignupSuccess(email string) {
+	<div>
+		A confirmation email has been sent to: <span class="font-semibold text-success"> { email }</span>
+	</div>
+}
+
+templ Signup() {
+	@layout.App(false) {
+		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
+			<div class="max-w-screen-sm w-full bg-base-300 py-16 px-32 rounded-xl">
+				<h1 class="text-center text-xl font-black">Signup for the AI PHOTO APP</h1>
+				@SignupForm(SignupParams{}, SignupErrors{})
+			</div>
+		</div>
+	}
+}
+
+templ SignupForm(params SignupParams, errors SignupErrors) {
+	<form
+		hx-post="/signup"
+		hx-swap="outerHTML"
+		class="space-y-2"
+	>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Email</span>
+			</div>
+			<input type="email" value={ params.Email } name="email" placeholder="Email" class="input input-bordered w-full"/>
+			if len(errors.Email) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Email }</span>
+				</div>
+			}
+		</label>
+		<label class="form-control w-full">
+			<div class="label">
+				<span class="label-text">Password</span>
+			</div>
+			<input type="password" name="password" placeholder="Password" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.Password }</span>
+				</div>
+			}
+		</label>
+		<label class="form-control w-full mb-10">
+			<div class="label">
+				<span class="label-text">Confirm password</span>
+			</div>
+			<input type="password" name="confirmPassword" placeholder="Confirm password" class="input input-bordered w-full"/>
+			if len(errors.Password) > 0 {
+				<div class="label">
+					<span class="label-text-alt text-error">{ errors.ConfirmPassword }</span>
+				</div>
+			}
+		</label>
+		<button class="btn btn-primary w-full mt-10">Sign Up<i class="fa-solid fa-arrow-right"></i></button>
+	</form>
+}
+
+type LoginErrors struct {
+	Email              string
+	Password           string
+	InvalidCredentials string
+}
+
 templ Login() {
 	@layout.App(false) {
 		<div class="flex justify-center mt-[calc(100vh-100vh+8rem)]">
@@ -14,13 +92,7 @@ templ Login() {
 	}
 }
 
-type LoginErrors struct {
-	Email              string
-	Password           string
-	InvalidCredentials string
-}
-
-templ LoginForm(creds supabase.UserCredentials, errors LoginErrors) {
+templ LoginForm(params supabase.UserCredentials, errors LoginErrors) {
 	<form
 		hx-post="/login"
 		hx-swap="outerHTML"
@@ -30,10 +102,10 @@ templ LoginForm(creds supabase.UserCredentials, errors LoginErrors) {
 			<div class="label">
 				<span class="label-text">Email</span>
 			</div>
-			<input type="email" value={ creds.Email } name="email" placeholder="Email" class="input input-bordered w-full"/>
+			<input type="email" value={ params.Email } name="email" placeholder="Email" class="input input-bordered w-full"/>
 			if len(errors.Email) > 0 {
 				<div class="label">
-					<span class="label-text-alt text-error">{errors.Email}</span>
+					<span class="label-text-alt text-error">{ errors.Email }</span>
 				</div>
 			}
 		</label>
@@ -44,7 +116,7 @@ templ LoginForm(creds supabase.UserCredentials, errors LoginErrors) {
 			<input type="password" name="password" placeholder="Password" class="input input-bordered w-full"/>
 			if len(errors.Password) > 0 {
 				<div class="label">
-					<span class="label-text-alt text-error">{errors.Password}</span>
+					<span class="label-text-alt text-error">{ errors.Password }</span>
 				</div>
 			}
 		</label>
