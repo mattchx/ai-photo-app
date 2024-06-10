@@ -71,7 +71,7 @@ templ SignupForm(params SignupParams, errors SignupErrors) {
 				</div>
 			}
 		</label>
-		<button class="btn btn-primary w-full mt-10">Sign Up<i class="fa-solid fa-arrow-right"></i></button>
+		<button class="btn btn-primary w-full mt-10" type="submit">Sign Up<i class="fa-solid fa-arrow-right"></i></button>
 	</form>
 }
 
@@ -125,4 +125,12 @@ templ LoginForm(params supabase.UserCredentials, errors LoginErrors) {
 		}
 		<button class="btn btn-primary w-full">Log In <i class="fa-solid fa-arrow-right"></i></button>
 	</form>
+}
+
+templ CallbackScript() {
+  <script>
+    var url = window.location.href;
+    var newURL = url.replace("#", "?")
+    window.location = newURL
+  </script>
 }
