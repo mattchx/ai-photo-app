@@ -5,9 +5,9 @@ import (
 	"ai-photo-app/pkg/util"
 	"ai-photo-app/view/auth"
 	"fmt"
-	"strings"
 	"log/slog"
 	"net/http"
+	"strings"
 
 	"github.com/nedpals/supabase-go"
 )
@@ -35,9 +35,8 @@ func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
 	}
 
 	setAuthCookie(w, resp.AccessToken)
-
-	http.Redirect(w, r, "/", http.StatusSeeOther)
-	return nil
+	// http.Redirect(w, r, "/", http.StatusSeeOther)
+	return hxRedirect(w, r, "/")
 }
 
 func validateSignup(params auth.SignupParams) (bool, auth.SignupErrors) {
@@ -63,7 +62,7 @@ func validateSignup(params auth.SignupParams) (bool, auth.SignupErrors) {
 	}
 	// check if passwords match
 	if strings.Compare(params.Password, params.ConfirmPassword) != 0 {
-	// if params.Password == params.ConfirmPassword {
+		// if params.Password == params.ConfirmPassword {
 		okay = false
 		errors.ConfirmPassword = "Passwords do not match"
 	}
@@ -100,13 +99,26 @@ func HandleAuthCallback(w http.ResponseWriter, r *http.Request) error {
 	if len(accessToken) == 0 {
 		return render(r, w, auth.CallbackScript())
 	}
-	fmt.Println(accessToken)
 	setAuthCookie(w, accessToken)
 	http.Redirect(w, r, "/", http.StatusSeeOther)
 	return nil
 }
 
-func setAuthCookie( w http.ResponseWriter, accessToken string) error {
+func HandleLogoutCreate(w http.ResponseWriter, r *http.Request) error {
+	cookie := http.Cookie{
+		Value:    "",
+		Name:     "at",
+		MaxAge:   -1,
+		HttpOnly: true,
+		Path:     "/",
+		Secure:   true,
+	}
+	http.SetCookie(w, &cookie)
+	http.Redirect(w, r, "/login", http.StatusSeeOther)
+	return nil
+}
+
+func setAuthCookie(w http.ResponseWriter, accessToken string) error {
 	cookie := &http.Cookie{
 		Value:    accessToken,
 		Name:     "at",

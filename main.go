@@ -28,10 +28,14 @@ func main() {
 
 	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
 	router.Get("/login", handler.MakeHandler(handler.HandleLoginIndex))
-	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
 	router.Get("/signup", handler.MakeHandler(handler.HandleSignupIndex))
+	router.Get("/settings", handler.MakeHandler(handler.HandleSettingsIndex))
+
+	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
 	router.Post("/signup", handler.MakeHandler(handler.HandleSignupCreate))
-	router.Get("/login/callback", handler.MakeHandler(handler.HandleAuthCallback))
+	router.Post("/logout", handler.MakeHandler(handler.HandleLogoutCreate))
+
+	router.Get("/auth/callback", handler.MakeHandler(handler.HandleAuthCallback))
 
 	port := os.Getenv("HTTP_LISTEN_ADDR")
 	slog.Info("App is running on ", "port", port)

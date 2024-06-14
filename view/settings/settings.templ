@@ -1,0 +1,12 @@
+package settings
+
+import (
+  "ai-photo-app/view/layout"
+  "ai-photo-app/types"
+)
+
+templ Index(user types.AuthenticatedUser) {
+  @layout.App(true) {
+    <div>hello { user.Email }</div>
+  }
+}
