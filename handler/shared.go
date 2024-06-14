@@ -2,7 +2,6 @@ package handler
 
 import (
 	"ai-photo-app/types"
-	"fmt"
 	"log/slog"
 	"net/http"
 
