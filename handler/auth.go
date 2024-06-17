@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log/slog"
 	"net/http"
+	"os"
 	"strings"
 
 	"github.com/nedpals/supabase-go"
@@ -18,6 +19,18 @@ func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
 
 func HandleSignupIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.Signup())
+}
+
+func HandleLoginWithGoogle(w http.ResponseWriter, r *http.Request) error {
+	resp, err := sb.Client.Auth.SignInWithProvider(supabase.ProviderSignInOptions{
+		Provider:   "google",
+		RedirectTo: os.Getenv("BASE_SITE_ADDR") + "auth/callback",
+	})
+	if err != nil {
+		return err
+	}
+	http.Redirect(w, r, resp.URL, http.StatusSeeOther)
+	return nil
 }
 
 func HandleLoginCreate(w http.ResponseWriter, r *http.Request) error {
