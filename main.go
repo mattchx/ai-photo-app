@@ -1,6 +1,7 @@
 package main
 
 import (
+	"ai-photo-app/db"
 	"ai-photo-app/handler"
 	"ai-photo-app/pkg/sb"
 	"embed"
@@ -49,6 +50,9 @@ func main() {
 
 func initEverthing() error {
 	if err := godotenv.Load(); err != nil {
+		return err
+	}
+	if err := db.Init(); err != nil {
 		return err
 	}
 	return sb.Init()

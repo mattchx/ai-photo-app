@@ -1,11 +1,16 @@
 package handler
 
 import (
+	"ai-photo-app/db"
 	"ai-photo-app/pkg/sb"
 	"ai-photo-app/types"
 	"context"
+	"database/sql"
 	"net/http"
 	"strings"
+	"errors"
+
+	"github.com/google/uuid"
 )
 
 func WithAuth(next http.Handler) http.Handler {
@@ -43,10 +48,16 @@ func WithUser(next http.Handler) http.Handler {
 		}
 
 		user := types.AuthenticatedUser{
+			ID:       uuid.MustParse(resp.ID),
 			Email:    resp.Email,
 			LoggedIn: true,
 		}
-
+		account, err := db.GetAccountByUserID(user.ID)
+		if !errors.Is(err, sql.ErrNoRows) {
+			next.ServeHTTP(w, r)
+			return
+		}
+		user.Account = account
 		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	}
