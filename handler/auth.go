@@ -1,8 +1,11 @@
 package handler
 
 import (
+	"ai-photo-app/db"
+	"ai-photo-app/pkg/kit/validate"
 	"ai-photo-app/pkg/sb"
 	"ai-photo-app/pkg/util"
+	"ai-photo-app/types"
 	"ai-photo-app/view/auth"
 	"fmt"
 	"log/slog"
@@ -12,6 +15,34 @@ import (
 
 	"github.com/nedpals/supabase-go"
 )
+
+func HandleAccountSetupIndex(w http.ResponseWriter, r *http.Request) error {
+	return render(r, w, auth.AccountSetup())
+}
+
+func HandleAccountSetupCreate(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("HandleAccountSetupCreate called")
+	params := auth.AccountSetupParams{
+		Username: r.FormValue("username"),
+	}
+	var errors auth.AccountSetupErrors
+	ok := validate.New(&params, validate.Fields{
+		"Username": validate.Rules(validate.Min(2), validate.Max(50)),
+	}).Validate(&errors)
+	if !ok {
+		return render(r, w, auth.AccountSetupForm(params, errors))
+	}
+	user := getAuthenticatedUser(r)
+	account := types.Account{
+		UserID: user.ID,
+		Username: params. Username,
+	}
+	if err := db.CreateAccount(&account); err != nil {
+		return err
+	}
+
+	return hxRedirect(w, r, "/")
+}
 
 func HandleLoginIndex(w http.ResponseWriter, r *http.Request) error {
 	return render(r, w, auth.Login())

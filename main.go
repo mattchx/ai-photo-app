@@ -26,20 +26,20 @@ func main() {
 	router.Use(handler.WithUser)
 
 	router.Handle("/*", http.StripPrefix("/", http.FileServer(http.FS(FS))))
-
 	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
 	router.Get("/login", handler.MakeHandler(handler.HandleLoginIndex))
 	router.Get("/login/provider/google", handler.MakeHandler(handler.HandleLoginWithGoogle))
-	router.Get("/signup", handler.MakeHandler(handler.HandleSignupIndex))
-
-	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
 	router.Post("/signup", handler.MakeHandler(handler.HandleSignupCreate))
 	router.Post("/logout", handler.MakeHandler(handler.HandleLogoutCreate))
-
+	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
+	router.Get("/signup", handler.MakeHandler(handler.HandleSignupIndex))
 	router.Get("/auth/callback", handler.MakeHandler(handler.HandleAuthCallback))
+	router.Get("/account/setup", handler.MakeHandler(handler.HandleAccountSetupIndex))
+	
+	router.Post("/account/setup", handler.MakeHandler(handler.HandleAccountSetupCreate))
 
 	router.Group(func(auth chi.Router) {
-		auth.Use(handler.WithAuth)
+		auth.Use(handler.WithAccountSetup)
 		auth.Get("/settings", handler.MakeHandler(handler.HandleSettingsIndex))
 	})
 

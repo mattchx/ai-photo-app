@@ -6,9 +6,9 @@ import (
 	"ai-photo-app/types"
 	"context"
 	"database/sql"
+	"errors"
 	"net/http"
 	"strings"
-	"errors"
 
 	"github.com/google/uuid"
 )
@@ -25,6 +25,28 @@ func WithAuth(next http.Handler) http.Handler {
 			http.Redirect(w, r, "/login?to="+path, http.StatusSeeOther)
 		}
 		next.ServeHTTP(w, r)
+	}
+	return http.HandlerFunc(fn)
+}
+
+func WithAccountSetup(next http.Handler) http.Handler {
+	fn := func(w http.ResponseWriter, r *http.Request) {
+		user := getAuthenticatedUser(r)
+		account, err := db.GetAccountByUserID(user.ID)
+		// The user has not setup account yet.
+		// Hense, redirect to /account/setup
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				http.Redirect(w, r, "/account/setup", http.StatusSeeOther)
+				return
+			} else {
+				next.ServeHTTP(w, r)
+				return
+			}
+		}
+		user.Account = account
+		ctx := context.WithValue(r.Context(), types.UserContextKey, user)
+		next.ServeHTTP(w, r.WithContext(ctx))
 	}
 	return http.HandlerFunc(fn)
 }
