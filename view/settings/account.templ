@@ -15,6 +15,7 @@ templ Index(user types.AuthenticatedUser) {
 					Username: user.Account.Username,
 				}, ProfileErrors{})
 			</div>
+			@UpdatePasswordForm()
 		</div>
 	}
 }
@@ -30,12 +31,19 @@ type ProfileErrors struct {
 
 templ ProfileForm(params ProfileParams, errors ProfileErrors) {
 	<form
-		hx-put="/account/setup"
+		hx-put="/settings/account/profile"
 		hx-swap="outerHTML"
 	>
 		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
 			<dt class="">Username</dt>
 			<dd class="sm:col-span-2 sm:mt-0">
+				if params.Success {
+					<div class="toast toast-top toast-end">
+						<div class="alert alert-success">
+							<span>Username updated successfully</span>
+						</div>
+					</div>
+				}
 				<input
 					class="input input-bordered w-full max-w-sm"
 					value={ params.Username }
@@ -47,7 +55,40 @@ templ ProfileForm(params ProfileParams, errors ProfileErrors) {
 			</dd>
 			<dt></dt>
 			<dd class="sm:col-span-2 sm:mt-0">
-				<button class="btn btn-primary">save</button>
+				<button class="btn btn-primary">update username</button>
+			</dd>
+		</div>
+	</form>
+}
+
+templ UpdatePasswordForm() {
+	<form>
+		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+			<dt class="">Old Password</dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<input
+					class="input input-bordered w-full max-w-sm"
+					value=""
+					name="oldPassword"
+				/>
+			</dd>
+		</div>
+		<dt></dt>
+		<div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 items-center mt-8">
+			<dt class="">New Password</dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<input
+					class="input input-bordered w-full max-w-sm"
+					value=""
+					name="newPassword"
+				/>
+				// if len(errors.Username) > 0 {
+				// 	<div class="text-sm text-error mt-1">{ errors.Username }</div>
+				// }
+			</dd>
+			<dt></dt>
+			<dd class="sm:col-span-2 sm:mt-0">
+				<button class="btn btn-primary">update password</button>
 			</dd>
 		</div>
 	</form>
