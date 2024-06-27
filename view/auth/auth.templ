@@ -166,6 +166,10 @@ templ LoginForm(params supabase.UserCredentials, errors LoginErrors) {
 	</form>
 }
 
+templ MagicLinkSuccess(email string) {
+	<div>An email to log you in has been sent to <span class="text-info">{ email }</span></div>
+}
+
 templ CallbackScript() {
 	<script>
     var url = window.location.href;

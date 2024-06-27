@@ -29,10 +29,9 @@ func main() {
 	router.Get("/", handler.MakeHandler(handler.HandleHomeIndex))
 	router.Get("/login", handler.MakeHandler(handler.HandleLoginIndex))
 	router.Get("/login/provider/google", handler.MakeHandler(handler.HandleLoginWithGoogle))
-	router.Post("/signup", handler.MakeHandler(handler.HandleSignupCreate))
+	router.Get("/signup", handler.MakeHandler(handler.HandleSignupIndex))
 	router.Post("/logout", handler.MakeHandler(handler.HandleLogoutCreate))
 	router.Post("/login", handler.MakeHandler(handler.HandleLoginCreate))
-	router.Get("/signup", handler.MakeHandler(handler.HandleSignupIndex))
 	router.Get("/auth/callback", handler.MakeHandler(handler.HandleAuthCallback))
 	router.Get("/account/setup", handler.MakeHandler(handler.HandleAccountSetupIndex))
 	
